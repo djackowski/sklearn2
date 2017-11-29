@@ -22,7 +22,10 @@ def scorer_squared_error(estimator, X, y):
     s = 0.0
     for i in range(inst):
         var = int((y[i] + index_of_0) % 2)
-        p = probabs[i, var]
+        try:
+            p = probabs[i, var]
+        except IndexError:
+            continue
         s += math.pow(1.0 - p, 2)
     return s / inst
 

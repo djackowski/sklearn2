@@ -43,7 +43,7 @@ def drawRange(X_train, y_train):
         return drawRange(X_train, y_train)
     elif stop - start < 4:
         return drawRange(X_train, y_train)
-    elif checkIfYtrainHasOnlyOneClass(y_train):
+    elif checkIfYtrainHasOnlyOneClass(y_train[start:stop]):
         return drawRange(X_train, y_train)
     else:
         return drawn
@@ -69,29 +69,39 @@ def evaluate_classifier():
             print("Classifier: ", classifierName)
             scorerTrainResultLoss = dict()
             scorerTrainResultError = dict()
+            lossTest = dict()
+            errorTest = dict()
             times = dict()
             for i in range(0, 500):
                 start, stop = drawRange(X_train, y_train)
-                examplesNo = stop
+                examplesNo = stop - start
                 print("\n")
                 print("Examples Number: ", examplesNo)
                 print("\n")
                 print("Start: ", start, "Stop: ", stop)
-                scorerTrainResultError[examplesNo], scorerTrainResultLoss[examplesNo], times[examplesNo] = evaluate_accuracy_and_time(
-                    classifier, X_train[0:stop], y_train[0:stop], X_test, y_test, start, stop)
+                scorerTrainResultError[examplesNo], scorerTrainResultLoss[examplesNo], times[examplesNo], lossTest[examplesNo], errorTest[examplesNo] = evaluate_accuracy_and_time(
+                    classifier, X_train[start:stop], y_train[start:stop], X_test, y_test, start, stop)
             listsLoss = sorted(scorerTrainResultLoss.items())
             listsErrors = sorted(scorerTrainResultError.items())
             listsTimes = sorted(times.items())
+            listsLossTests = sorted(lossTest.items())
+            listsErrorTests = sorted(errorTest.items())
             xL, yL = zip(*listsLoss)
             xE, yE = zip(*listsErrors)
             xT, yT = zip(*listsTimes)
+            xLT, yLT = zip(*listsLossTests)
+            xET, yET = zip(*listsErrorTests)
 
             plt.figure(1).set_size_inches(10, 10)
             plt.subplot(211)
             plt.title(classifierName + " " + ds_name)
             plt.grid(True)
-            plt.plot(xL, yL, label="Loss")
-            plt.plot(xE, yE, label="Error")
+            # plt.plot(xL, yL, label="Loss")
+            # plt.plot(xE, yE, label="Error")
+            plt.semilogy(xL, yL, label="Train Loss")
+            plt.semilogy(xE, yE, label="Train Error")
+            plt.semilogy(xLT, yLT, label="Test Loss")
+            plt.semilogy(xET, yET, label="Test Error")
             plt.ylabel("Loss/Error")
             plt.xlabel("Training Data")
             plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,

@@ -11,6 +11,7 @@ from utils.evaluate import scorer_squared_error, scorer_01loss
 def evaluate_accuracy_and_time(classifier, X_train, y_train, X_test, y_test, start, stop):
     start_time = timeit.default_timer()
     # X_shuf, Y_shuf = shuffle(X_transformed, Y)
+    print("Unique: ", np.unique(y_train))
     classifier.fit(X_train, y_train)
 
     training_time = timeit.default_timer() - start_time
@@ -21,6 +22,8 @@ def evaluate_accuracy_and_time(classifier, X_train, y_train, X_test, y_test, sta
 
     lossResult = 0
     errorResult = 0
+    lossTest = 0
+    errorTest = 0
 
     # for scorer, scorer_name in scorers:
     #     result = scorer(classifier, X_train[start:stop], y_train[start:stop])
@@ -36,6 +39,7 @@ def evaluate_accuracy_and_time(classifier, X_train, y_train, X_test, y_test, sta
         resultTest = scorer(classifier, X_test, y_test)
         print("Test {0} = {1}".format(scorer_name, resultTest))
         lossResult = resultTrain
+        lossTest = resultTest
 
     for scorer, scorer_name in scorersError:
         resultTrain = scorer(classifier, X_train, y_train)
@@ -44,5 +48,6 @@ def evaluate_accuracy_and_time(classifier, X_train, y_train, X_test, y_test, sta
         resultTest = scorer(classifier, X_test, y_test)
         print("Test {0} = {1}".format(scorer_name, resultTest))
         errorResult = resultTrain
+        errorTest = resultTest
 
-    return errorResult, lossResult, training_time
+    return errorResult, lossResult, training_time, lossTest, errorTest
